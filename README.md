@@ -49,6 +49,7 @@ Each repository was cloned on **8 October 2026** and read at the commit listed i
 | `reverification-2026-10-10.md` | Blind re-classification and fact check |
 | `review-2026-10-11.md` | Adversarial review of 11 October |
 | `review-2026-10-13.md` | Second adversarial review, on the shortened article (13 October) |
+| `human-check-2026-10-13.md` | The author's line-by-line check of every claim the article makes about a named project (13 October) |
 | `cross-model/` | Blind re-classification by OpenAI's Codex, agreement and resolution of every disagreement (13 October) |
 | `repos.txt` | Repository list |
 
@@ -146,7 +147,7 @@ The audit was run by AI agents (Claude) in disposable cloud sandboxes with no cr
 
 For verification, the work was redone from scratch. On 10 October, separate agent runs re-classified the 20 repositories blind, and the differences were resolved against the source code. On 11 October, six independent agent reviewers attacked the result. On 13 October, because all of these agents were Claude models, a model from another vendor (OpenAI's Codex, `gpt-6-astra`) classified the 20 repositories blind as a cross-check (`cross-model/`).
 
-Fulvio personally checked the most significant case, the mod shipped by `AgriciDaniel/claude-seo`. The other 19 classifications were verified by agents, not by him line by line.
+On 13 October, Fulvio personally checked every claim the article makes about a named project, plus the main counts and the two cited studies, against the linked source lines (`human-check-2026-10-13.md`: 16 of 16 confirmed). The classification cells not cited in the article were verified by agents and by the cross-model check, not by him line by line.
 
 ## Limits
 
