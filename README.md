@@ -1,6 +1,6 @@
 # Agent skills audit (October 2026)
 
-This is a static, file-by-file read of 20 agent skills and Claude Code plugins recommended on Medium. It was made for the article "Skills Are Dependencies Now. Who Approved Yours?" [link to the article].
+This is a static analysis of 20 agent skills and Claude Code plugins recommended on Medium: an automated scan of the shipped files, followed by a review of the manifests, hooks, installers and scripts they reference. It was made for the article "Skills Are Dependencies Now. Who Approved Yours?" [link to the article].
 
 The audit measures **capabilities, not intent**. Nothing in the parts reviewed suggested malicious behaviour. Nothing from the audited repositories was executed.
 
