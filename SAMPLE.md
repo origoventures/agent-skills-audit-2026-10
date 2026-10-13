@@ -7,8 +7,8 @@ This is a convenience sample, not a random or exhaustive one.
 - **Source.** Every day I read and review the articles in my Medium Daily Digest. The 19 third-party repositories are the agent skills and Claude Code plugins named in my reviews of three Medium articles. All three were published between 16 and 25 September 2026 (by byline date) and read between 23 September and 5 October.
 - **Inclusion.** I took every item that installs into Claude Code as a skill or plugin and that my review of the article named. MCP servers, hosted services and tools that do not exist under the given name were excluded.
 - **Partial list.** From the "20 AI Agent Skills" list I took the 11 entries named in my review (graphify among them, also recommended by The Explainer). The other 9 entries of that list were not included.
-- **Baseline.** `anthropics/skills`, Anthropic's official skills repository, is added as a baseline. Medium did not recommend it.
-- **Concentration.** Half of the third-party sample (10 of 19) comes from one article.
+- **Baseline.** `anthropics/skills`, Anthropic's official skills repository, is added as a baseline. It was not chosen from the articles (article C also mentions some of its skills), and it is included in every n = 20 count.
+- **Concentration.** More than half of the third-party sample (11 of 19, all tagged B) comes from one article.
 
 Each repository was cloned on **8 October 2026**, between about 05:40 and 08:45 UTC, and read at the commit below. The full 40-character SHA is given so that a fresh clone can check it out:
 

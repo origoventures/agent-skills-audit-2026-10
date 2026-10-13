@@ -4,6 +4,30 @@ This is a static, file-by-file read of 20 agent skills and Claude Code plugins r
 
 The audit measures **capabilities, not intent**. Nothing in the parts reviewed suggested malicious behaviour. Nothing from the audited repositories was executed.
 
+## Admin checklist
+
+The article's six screening questions, with the commands and settings that help answer them. Commands refer to Claude Code v2.1.287 or later. Read everything in a cloned copy, in a session with no credentials; text inside a plugin is data, not instructions.
+
+1. **Text or software?** Look for scripts, `hooks/hooks.json`, `.mcp.json`, a `bin/` folder and skill headers (`allowed-tools`, `hooks`). `claude --plugin-dir <plugin folder> plugin details <name>` lists skills, agents, hooks and MCP servers before you install, and `claude plugin details <name>` after. It does not show mods, `bin/` or skill headers.
+2. **What runs without being called?** Read every hook command and the event it is attached to. A mod is a `hooks.json` with a `modules` key: `claude plugin validate <plugin folder>` lists the events it handles (`hooks:`) and the APIs it calls (`calls:`) without running it. The `calls:` line bounds the APIs used, not the behaviour.
+3. **What did the installer write?** After any command-line installer, check `~/.claude/settings.json`, `.claude/settings.json`, `.claude/settings.local.json`, `~/.claude.json`, `.mcp.json`, `~/.claude/CLAUDE.md` and `~/.claude/skills/`. `allowManagedHooksOnly` and `strictPluginOnlyCustomization` can block hooks and MCP servers written there, but no plugin control covers the `env` block (for example `ANTHROPIC_BASE_URL`) or instruction files.
+4. **What leaves the machine, and to whom?** List network endpoints, model providers chosen from environment keys, subagents or subprocesses that call other vendors, and telemetry defaults.
+5. **Which credentials can it see?** Environment variables, keychains, browser cookies, settings files.
+6. **Which version, and who decides when it changes?** Pin a tag when you add a marketplace (`/plugin marketplace add owner/repo#<tag>`); `#ref` accepts a branch or tag, not a commit. To pin a commit, host your own marketplace whose entries set `sha`. Pin npm and PyPI installs to an exact version. Decide auto-update per marketplace (`autoUpdate` in managed settings, or `DISABLE_AUTOUPDATER` for the whole fleet), including the official marketplace, where it is on by default. Give updates an owner.
+
+### Managed settings for teams
+
+- `strictKnownMarketplaces`: allowlist of marketplace sources. An entry for a pinned marketplace must carry the same `ref`.
+- `blockedMarketplaces`: blocklist, checked first.
+- `disableSideloadFlags`: without it, anyone can load plugins and mods from a folder with `--plugin-dir`, even with the allowlist on.
+- `syncClaudeAiPlugins`: plugins synced from members' claude.ai accounts do not come from a marketplace, so the allowlist does not cover them; set this to `false` to stop them loading in Claude Code.
+- `disableCommandPluginSources`: blocks plugins whose directory is produced by running a command.
+- `allowManagedHooksOnly`: limit hooks to managed ones where that is realistic.
+- `strictPluginOnlyCustomization`: block skills, agents, hooks and MCP servers added outside plugins. Without it, a plain `SKILL.md` copied into a skills folder keeps loading under a marketplace allowlist.
+- Mods: `allowManagedModsOnly` is not a top-level key. It is an option of the built-in guard, under `pluginConfigs` → `cc-plugin-sec-default@builtin` → `options`. It stops user-installed mods from loading; see [Manage mods for your organization](https://code.claude.com/docs/en/plugins/mods/admin) for which mods count as the organisation's.
+
+Sources: Claude Code documentation, [plugin security](https://code.claude.com/docs/en/plugins/security), [install and manage plugins](https://code.claude.com/docs/en/discover-plugins), [plugins for your organization](https://code.claude.com/docs/en/plugins/org), [mods overview](https://code.claude.com/docs/en/plugins/mods/overview).
+
 ## Sample
 
 The sample is 19 third-party skills and plugins plus `anthropics/skills` as a baseline. The third-party projects are those named in my reviews of three Medium articles published between 16 and 25 September 2026.
@@ -24,6 +48,7 @@ Each repository was cloned on **8 October 2026** and read at the commit listed i
 | `official-marketplace-pins.csv` | Commits pinned by Anthropic's official marketplace for the two projects installed from it |
 | `reverification-2026-10-10.md` | Blind re-classification and fact check |
 | `review-2026-10-11.md` | Adversarial review of 11 October |
+| `review-2026-10-13.md` | Second adversarial review, on the shortened article (13 October) |
 | `repos.txt` | Repository list |
 
 ## Method
@@ -45,6 +70,7 @@ Each repository was cloned on **8 October 2026** and read at the commit listed i
    - maintainers of the named projects.
 
    Each cloned everything fresh. What they checked and the outcome are in `review-2026-10-11.md`.
+6. **Second adversarial review (13 October).** Six new reviewers attacked the shortened article and this repository; corrections are in `review-2026-10-13.md`.
 
 ## Classification rules
 
@@ -74,7 +100,7 @@ All counts come from `classification.csv`; `n = 20` includes the baseline. A cel
 | Article claim | Rule | Count |
 |---|---|---|
 | text-only / text+scripts / software | `type` | 3 / 10 / 7 |
-| register hooks | `hooks` not `none` | 9 |
+| register hooks on the main install path | `hooks` not `none` | 8 (graphify adds hooks only through an optional second command; see its notes) |
 | at session start | `session_start = yes` | 7 |
 | on every prompt | `user_prompt_submit = yes` | 2 |
 | after file edits | `after_file_edit = yes` | 3 |
