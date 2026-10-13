@@ -49,6 +49,7 @@ Each repository was cloned on **8 October 2026** and read at the commit listed i
 | `reverification-2026-10-10.md` | Blind re-classification and fact check |
 | `review-2026-10-11.md` | Adversarial review of 11 October |
 | `review-2026-10-13.md` | Second adversarial review, on the shortened article (13 October) |
+| `cross-model/` | Blind re-classification by OpenAI's Codex, agreement and resolution of every disagreement (13 October) |
 | `repos.txt` | Repository list |
 
 ## Method
@@ -71,6 +72,7 @@ Each repository was cloned on **8 October 2026** and read at the commit listed i
 
    Each cloned everything fresh. What they checked and the outcome are in `review-2026-10-11.md`.
 6. **Second adversarial review (13 October).** Six new reviewers attacked the shortened article and this repository; corrections are in `review-2026-10-13.md`.
+7. **Cross-model check (13 October).** OpenAI's Codex (`gpt-6-astra`) classified the 20 repositories blind from the column rules alone. It agreed on 231 of 240 categorical cells; every disagreement was re-read against the source and four cells were corrected (`cross-model/`).
 
 ## Classification rules
 
@@ -87,9 +89,9 @@ Each column of `classification.csv`:
   - `every_tool_call`: runs before and after every tool call.
 - **mod**: a `hooks.json` with a `modules` key (Claude Code mods, v2.1.287 and later).
 - **network_core / credentials_core**: `yes` only when the capability is part of the core function, not optional extras.
-- **reads_browser_cookies**: reads browser cookies or session tokens, whether opt-in or not.
+- **reads_browser_cookies**: reads cookies from the user's browser, whether opt-in or not. Session cookies the user supplies by hand are noted, not counted (clarified on 13 October after the cross-model check).
 - **downloads_code**: the main install path, or the core function on first use, fetches packages, CLIs or binaries. Optional extras that one sub-skill or the user installs by hand do not count. Borderline cases are explained in the notes.
-- **main_install**: the path the project's README presents first or recommends.
+- **main_install**: the path the project's README explicitly recommends; if none is marked as recommended, the path it presents first.
 - **pinned_main_path**: whether the main path fixes a release, tag or commit. For the two projects whose main path is Anthropic's official marketplace, the pin set there counts. That marketplace updates its pins itself and has auto-update on by default, so a pin decides who moves the version, not whether it moves.
 - **pipes_own_installer_to_shell**: the project's own docs tell users to pipe its installer into a shell. Third-party installers (for example uv) do not count.
 
@@ -99,13 +101,13 @@ All counts come from `classification.csv`; `n = 20` includes the baseline. A cel
 
 | Article claim | Rule | Count |
 |---|---|---|
-| text-only / text+scripts / software | `type` | 3 / 10 / 7 |
+| text-only / text+scripts / software | `type` | 3 / 8 / 9 |
 | register hooks on the main install path | `hooks` not `none` | 8 (graphify adds hooks only through an optional second command; see its notes) |
 | at session start | `session_start = yes` | 7 |
 | on every prompt | `user_prompt_submit = yes` | 2 |
 | after file edits | `after_file_edit = yes` | 3 |
 | on every tool call | `every_tool_call = yes` | 1 |
-| download more code | `downloads_code = yes` | 9 |
+| download more code | `downloads_code = yes` | 11 |
 | network as core function | `network_core = yes` | 5 |
 | credentials as core function | `credentials_core = yes` | 3 |
 | read browser cookies | `reads_browser_cookies = yes` | 2 |
@@ -142,7 +144,7 @@ python3 -I audit.py repos out
 
 The audit was run by AI agents (Claude) in disposable cloud sandboxes with no credentials, as part of the article's own point. Fulvio Vanacore defined the questions and the classification criteria, discussed the findings with the agents and decided what to publish.
 
-For verification, the work was redone from scratch. On 10 October, separate agent runs re-classified the 20 repositories blind, and the differences were resolved against the source code. On 11 October, six independent agent reviewers attacked the result.
+For verification, the work was redone from scratch. On 10 October, separate agent runs re-classified the 20 repositories blind, and the differences were resolved against the source code. On 11 October, six independent agent reviewers attacked the result. On 13 October, because all of these agents were Claude models, a model from another vendor (OpenAI's Codex, `gpt-6-astra`) classified the 20 repositories blind as a cross-check (`cross-model/`).
 
 Fulvio personally checked the most significant case, the mod shipped by `AgriciDaniel/claude-seo`. The other 19 classifications were verified by agents, not by him line by line.
 
